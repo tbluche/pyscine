@@ -1,0 +1,6 @@
+#!/bin/bash
+port=$1
+[ -z "$port" ] && port=8000
+echo "Will run on port $port"
+open http://localhost:$port
+python -m http.server $port

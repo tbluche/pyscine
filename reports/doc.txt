@@ -1,0 +1,169 @@
+accordion=true
+
+[Lists]
+
+--code
+type=plaintext
+__nop--list
+one `code`
+two **bold**
+and [three](link)
+<&lt;truc&gt;>another link
+--list
+one `code`
+two **bold**
+and [three](link)
+<<truc>>another link
+
+--code
+type=plaintext
+__nop--list
+ordered=true
+one `code`
+two **bold**
+and [three](link)
+<&lt;truc&gt;>another link
+--list
+ordered=true
+one `code`
+two **bold**
+and [three](link)
+<<truc>>another link
+
+--code
+type=plaintext
+__nop--list
+block=true
+one `code`
+two **bold**
+and [three](link)
+<&lt;truc&gt;>another link
+--list
+block=true
+one `code`
+two **bold**
+and [three](link)
+<<truc>>another link
+
+--code
+type=plaintext
+__nop--list
+block=true
+prelude=List with a prelude:
+<&lt;foo&gt;>a link
+<&lt;truc&gt;>another link
+--list
+block=true
+prelude=List with a prelude:
+<<foo>>a link
+<<truc>>another link
+
+[Python]
+--code
+type=plaintext
+__nop--python
+a=np.array(range(10))
+print(a.sum())
+
+--python
+a=np.array(range(10))
+print(a.sum())
+
+--code
+type=plaintext
+__nop--python
+print(@data.x[:10])
+
+--python
+print(@data.x[:10])
+
+
+[Plotting with pyplot]
+
+--code
+type=plaintext
+__nop--pyplot
+X = np.linspace(0, 1, 100)
+Y = np.sin(X)
+plt.plot(X, Y)
+
+--pyplot
+X = np.linspace(0, 1, 100)
+Y = np.sin(X)
+plt.plot(X, Y)
+
+--code
+type=plaintext
+__nop--pyplot
+x = @data.sinus[0]
+plt.plot(@data.sinus[0], @data.sinus[1])
+
+--pyplot
+x = @data.sinus[0]
+plt.plot(@data.sinus[0], @data.sinus[1])
+
+[Plotting with plotly]
+
+--code
+type=plaintext
+__nop--plotly
+Plotly.newPlot( CONTAINER, [{
+	x: @data.x,
+	y: @data.y }], {
+	margin: { t: 0 } } );
+
+
+--plotly
+Plotly.newPlot( CONTAINER, [{
+	x: @data.x,
+	y: @data.y }], {
+	margin: { t: 0 } } );
+
+
+--code
+type=plaintext
+__nop--plotly
+var y0 = [];
+var y1 = [];
+for (var i = 0; i < 50; i ++) {
+	y0[i] = Math.random();
+	y1[i] = Math.random() + 1;
+}
+
+var trace1 = {
+  y: y0,
+  type: 'box'
+};
+
+var trace2 = {
+  y: y1,
+  type: 'box'
+};
+
+var data = [trace1, trace2];
+
+Plotly.newPlot(CONTAINER, data);
+
+
+
+--plotly
+var y0 = [];
+var y1 = [];
+for (var i = 0; i < 50; i ++) {
+	y0[i] = Math.random();
+	y1[i] = Math.random() + 1;
+}
+
+var trace1 = {
+  y: y0,
+  type: 'box'
+};
+
+var trace2 = {
+  y: y1,
+  type: 'box'
+};
+
+var data = [trace1, trace2];
+
+Plotly.newPlot(CONTAINER, data);

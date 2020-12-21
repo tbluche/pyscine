@@ -1,0 +1,3 @@
+#!/bin/bash
+rm *.html
+python make.py && ./run $1

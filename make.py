@@ -517,10 +517,7 @@ class List(Parseable):
                     )
                     elt.append(Text(item))
                 else:
-                    a_elt = HtmlElement(
-                        "a",
-                        {"href": href},
-                    )
+                    a_elt = HtmlElement("a", {"href": href},)
                     a_elt.append(Text(item))
                     elt = HtmlElement(
                         "li", {"class": "list-group-item" if self.block else ""}
@@ -598,9 +595,7 @@ class Section(Renderable):
                 },
             )
             btn.append(Text(self.title))
-            h2 = HtmlElement(
-                "h2", {"class": "accordion-header", "id": f"heading{this_id}"}
-            )
+            h2 = HtmlElement("h2", {"class": "accordion-header", "id": f"{this_id}"})
             h2.append(btn)
             elt.append(h2)
             body = HtmlElement("div", {"class": "accordion-body"})
@@ -610,7 +605,7 @@ class Section(Renderable):
                 {
                     "id": f"collapse{this_id}",
                     "class": "accordion-collapse collapse",
-                    "aria-labelledby": f"heading{this_id}",
+                    "aria-labelledby": f"{this_id}",
                     "data-bs-parent": "#accordionExample",
                 },
             )
@@ -618,9 +613,7 @@ class Section(Renderable):
             elt.append(div)
         else:
             elt = HtmlElement("div", {"class": "section"})
-            h2 = HtmlElement(
-                "h2", {"class": "section-header", "id": f"heading{this_id}"}
-            )
+            h2 = HtmlElement("h2", {"class": "section-header", "id": f"{this_id}"})
             h2.append(Text(self.title))
             elt.append(h2)
             body = HtmlElement("div", {"class": "section-body"})
@@ -636,6 +629,8 @@ class Section(Renderable):
             if line == "\n":
                 line = f.readline()
                 continue
+            if line.startswith("id="):
+                self.id = line.strip()[3:]
             elif line.startswith("--"):
                 cls = REGISTER[line.strip().replace("--", "").strip()]
                 line, obj = cls.parse(line, f, doc)
@@ -715,11 +710,67 @@ class Document(Renderable):
             new_line = new_line.replace(x, self.get_data(x, to_str=True))
         return new_line
 
+    def navbar(self):
+        nav = HtmlElement(
+            "nav", {"class": "navbar navbar-expand-lg navbar-light bg-light"}
+        )
+        home = HtmlElement("a", {"href": "index.html"})
+        home.append(Text("Home"))
+        nav.append(home)
+        toggle = HtmlElement("span", {"class": "navbar-toggler-icon"})
+        toggle_btn = HtmlElement(
+            "button",
+            {
+                "class": "navbar-toggler",
+                "type": "button",
+                "data-toggle": "collapse",
+                "data-target": "#navbarSupportedContent",
+                "aria-controls": "navbarSupportedContent",
+                "aria-expanded": "false",
+                "aria-label": "Toggle navigation",
+            },
+        )
+        toggle_btn.append(toggle)
+        nav.append(toggle_btn)
+        content = HtmlElement(
+            "div", {"class": "collapse navbar-collapse", "id": "navbarSupportedContent"}
+        )
+        content_list = HtmlElement("ul", {"class": "navbar-nav mr-auto"})
+        toc = HtmlElement("li", {"class": "nav-item dropdown"})
+        toc_link = HtmlElement(
+            "a",
+            {
+                "class": "nav-link dropdown-toggle",
+                "href": "#",
+                "id": "navbarDropdown",
+                "role": "button",
+                "data-toggle": "dropdown",
+                "aria-haspopup": "true",
+                "aria-expanded": "false",
+            },
+        )
+        toc_link.append(Text("Content"))
+        toc.append(toc_link)
+        toc_list = HtmlElement(
+            "div", {"class": "dropdown-menu", "aria-labelledby": "navbarDropdown"}
+        )
+        for section in self.content:
+            sec_link = HtmlElement(
+                "a", {"class": "dropdown-item", "href": "#{}".format(selction.id)}
+            )
+            sec_link.append(Text(section.title))
+            toc_list.append(sec_link)
+        toc.append(toc_list)
+        content_list.append(toc)
+        content.append(content_list)
+        nav.append(content)
+        return nav
+
     def render(self):
         css_class = "accordion" if self.accordion else ""
         elt = HtmlElement("div", {"class": css_class, "id": "accordionExample"})
         elt.content = self.content
-        return elt.render()
+        return self.navbar().render() + elt.render()
 
     def parse(self, line, f):
         prelude = True
@@ -739,7 +790,7 @@ class Document(Renderable):
             elif line.startswith("["):
                 prelude = False
                 title = line.strip()[1:-1]
-                id = "{:03d}".format(len(self.content) + 1)
+                id = "heading{:03d}".format(len(self.content) + 1)
                 section = Section(title, id, accordion=self.accordion)
                 line, _ = section.parse(line, f, self)
                 self.content.append(section)
